@@ -3,24 +3,49 @@
   <head>
   </head>
   <body>
-    <button id="clicker">click me!</button>
+    <button class="clicker" data-lightid="1">click me for 1</button>
+    <button class="clicker" data-lightid="2">click me for 2</button>
+    <button class="clicker" data-lightid="3">click me for 3</button>
+    <button class="clicker" data-lightid="4">click me for 4</button>
+    <button class="clicker" data-lightid="5">click me for 5</button>
+    <button class="clicker" data-lightid="6">click me for 6</button>
 
     <script>
-      document
-      document.getElementById("clicker").onclick = hitTheLights
+      var lightState = [false,false,false,false,false,false],
+          clickers = document.getElementsByClassName("clicker"),
+          i
+      for (i=0; i<clickers.length; i++) {
+        var clicker = clickers[i]
+        clicker.onclick = hitTheLights
+      }
 
-      function hitTheLights() {
-        httprequest = new XMLHttpRequest();
-        httprequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/6/state", true);
-        // httprequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-        httprequest.send(JSON.stringify(
-        {
-          on: true,
-          sat: "254",
-          bri: "200",
-          hue: 50000
+      function hitTheLights(event) {
+        console.log(event)
+        var lightid = parseInt(event.target.dataset.lightid)
+        if (lightState[lightid]) {
+          turnOff(lightid)
+        } else {
+          turnOn(lightid)
         }
-        ));
+        lightState[lightid] = !lightState[lightid]
+      }
+
+
+      function turnOn(lightid) {
+        httprequest = new XMLHttpRequest();
+        httprequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/" + lightid + "/state", true);
+        httprequest.send(JSON.stringify({
+          on: true,
+          sat: 254,
+          bri: 200,
+          hue: 50000
+        }));
+      }
+
+      function turnOff(lightid) {
+        httprequest = new XMLHttpRequest();
+        httprequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/" + lightid + "/state", true);
+        httprequest.send(JSON.stringify({on: false}));
       }
     </script>
   </body>
