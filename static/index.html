@@ -1,0 +1,27 @@
+<! doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+    <button id="clicker">click me!</button>
+
+    <script>
+      document
+      document.getElementById("clicker").onclick = hitTheLights
+
+      function hitTheLights() {
+        httprequest = new XMLHttpRequest();
+        httprequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/6/state", true);
+        // httprequest.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        httprequest.send(JSON.stringify(
+        {
+          on: true,
+          sat: "254",
+          bri: "200",
+          hue: 50000
+        }
+        ));
+      }
+    </script>
+  </body>
+</html>
