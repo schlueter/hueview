@@ -3,20 +3,62 @@
   <head>
   </head>
   <body>
-    <button class="clicker" data-lightid="1">click me for 1</button>
-    <button class="clicker" data-lightid="2">click me for 2</button>
-    <button class="clicker" data-lightid="3">click me for 3</button>
-    <button class="clicker" data-lightid="4">click me for 4</button>
-    <button class="clicker" data-lightid="5">click me for 5</button>
-    <button class="clicker" data-lightid="6">click me for 6</button>
-
     <script>
-      var lightState = [false,false,false,false,false,false],
-          clickers = document.getElementsByClassName("clicker"),
-          i
-      for (i=0; i<clickers.length; i++) {
-        var clicker = clickers[i]
-        clicker.onclick = hitTheLights
+      var lightState = [false,false,false,false,false,false]
+
+			getLights().then(function(response) {
+				var numberOfLights = Object.keys(JSON.parse(response)).length
+				makeButtonsForLights(numberOfLights)
+			}, function(error) {
+				console.log('Error!', response)
+			})
+
+			function makeButtonsForLights(numberOfLights) {
+				var body = document.getElementsByTagName('body')[0],
+						i,
+					  clicker
+        for (i=1; i<=numberOfLights; i++) {
+					clicker = document.createElement('button')
+					clicker.dataset.lightid = i
+					clicker.innerHTML = "Toggle light " + i
+          clicker.onclick = hitTheLights
+					body.appendChild(clicker)
+        }
+			}
+
+      function get(url) {
+				return new Promise(function(resolve, reject) {
+					var req = new XMLHttpRequest()
+					req.open('GET', url)
+
+					req.onload = function () {
+						if (req.status == 200) {
+							resolve(req.response)
+						} else {
+							reject(Error(req.statusText))
+						}
+					}
+
+					req.onerror = function () {
+						reject(Error("Network error"))
+					}
+
+					req.send()
+				})
+			}
+
+      function getLights() {
+        return get("http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/")
+      }
+
+      function alertContents() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+          if (httpRequest.status === 200) {
+            return httpRequest.responseText
+          } else {
+            alert('There was a problem with the request.')
+          }
+        }
       }
 
       function hitTheLights(event) {
@@ -32,20 +74,20 @@
 
 
       function turnOn(lightid) {
-        httprequest = new XMLHttpRequest();
-        httprequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/" + lightid + "/state", true);
-        httprequest.send(JSON.stringify({
+        httpRequest = new XMLHttpRequest();
+        httpRequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/" + lightid + "/state", true)
+        httpRequest.send(JSON.stringify({
           on: true,
           sat: 254,
           bri: 200,
           hue: 50000
-        }));
+        }))
       }
 
       function turnOff(lightid) {
-        httprequest = new XMLHttpRequest();
-        httprequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/" + lightid + "/state", true);
-        httprequest.send(JSON.stringify({on: false}));
+        httpRequest = new XMLHttpRequest();
+        httpRequest.open("PUT", "http://192.168.1.108/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/lights/" + lightid + "/state", true)
+        httpRequest.send(JSON.stringify({on: false}));
       }
     </script>
   </body>
