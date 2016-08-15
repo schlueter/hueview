@@ -9,29 +9,22 @@
       script.onload = () => resolve(url)
       head.appendChild(script)
     })
-    .then(function(value) { console.log('loaded', value, 'successfully') })
-    .catch(function(error) { console.log('failed to load', url) })
   }
 
-  var includes = ['static/hueston.js', 'static/hueview.js'].map(loadScript)
+  Promise.all([
+    'static/hueston.js',
+    'static/hueview.js'
+  ].map(loadScript))
+    .then(values => main())
+    .catch(error => console.log('errored', error))
 
-  Promise.all(includes)
-    .then(function(values) {console.log('done', values); main()})
-    .catch(function(err) {console.log('errored')})
-
-  var main = function(values) {
-    console.log(values)
-    hueston = new Hueston()
-    hueston.getHubIP().then(function(response) {
-      var hubIP = JSON.parse(response)[0]['internalipaddress']
-      hueston.getLights(hubIP).then(function(response) {
-        var numberOfLights = Object.keys(JSON.parse(response)).length
-        makeButtonsForLights(numberOfLights)
-      }, function(error) {
-        console.log('Error!', response)
-      })
-    }, function(error) {
-      console.log('Error!', response)
+  var main = function() {
+    var hueston = new Hueston()
+    var hueView = new HueView()
+    hueston.getLights().then(lights => {
+      var numberOfLights = Object.keys(lights).length
+      hueView.makeButtonsForLights(numberOfLights, hueston)
     })
+    .catch(error => console.log('Error!', error))
   }
 })()
