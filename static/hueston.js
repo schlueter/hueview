@@ -25,6 +25,14 @@ var Hueston = Hueston || function () {
   function getAPI(path, hubIP) {
     hubIP = hubIP || this.hubIP
     return get("http://" + hubIP + "/api/6c3N6aVAYAIvGrpe4uF9v3PR-l7udDtKDKX0veiQ/" + path)
+      .then(response => {
+        console.log(response[0].error)
+        if (Array.isArray(response) && response[0].hasOwnProperty('error') && response[0].error.description === "unauthorized user") {
+          alert('Unauthorized!')
+        } else {
+          return response
+        }
+      })
   }
 
   this.hitTheLights = event => {
