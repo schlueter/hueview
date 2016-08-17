@@ -1,5 +1,5 @@
-'use strict';
 (function() {
+  'use strict';
   function loadScript(url) {
     return new Promise(function(resolve, reject) {
       var head = document.getElementsByTagName('head')[0]
