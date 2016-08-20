@@ -1,0 +1,12 @@
+{
+  "esversion": 6,
+  "asi": true,
+  "laxbreak": true,
+  "laxcomma": true,
+  "browser": true,
+  "devel": true,
+  "globals": {
+    "HueView": false,
+    "Hueston": false
+  }
+}
