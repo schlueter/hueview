@@ -68,20 +68,25 @@ window.Hueston = function () {
       })
 
   this.getHubIP = () =>
-    new Promise((resolve, reject) =>
-      request('GET', "https://www.meethue.com/api/nupnp")
-        .then(response => {
-          if (response.length === 1) {
-            this.hubID = response[0].id
-            this.hubIP = response[0].internalipaddress
-          } else {
-            // TODO
-            alert('Multi hub systems not yet supported')
-            reject('Multi hub systems not yet supported')
-          }
-          resolve(this.hubIP)
-        })
-        .catch(error => console.log(error)))
+    new Promise((resolve, reject) => {
+      if (this.hubID === undefined || this.hubIP === undefined) {
+        request('GET', "https://www.meethue.com/api/nupnp")
+          .then(response => {
+            if (response.length === 1) {
+              this.hubID = response[0].id
+              this.hubIP = response[0].internalipaddress
+            } else {
+              // TODO
+              alert('Multi hub systems not yet supported')
+              reject('Multi hub systems not yet supported')
+            }
+            resolve(this.hubIP)
+          })
+          .catch(error => console.log(error))
+      } else {
+        resolve(this.hubIP)
+      }
+    })
 
   this.getLights = () =>
     new Promise((resolve, reject) =>
