@@ -1,25 +1,20 @@
 var HueView = function(hueston) {
   'use strict';
   this.hueston = hueston
-  this.makeButtonsForLights = () => {
-    var body = document.getElementById('hueview'),
-        i,
-        clicker
+  this.makeButtonsForLights = () =>
     this.hueston.getLights().then(lights => {
+      var  i
       for (var lightid in lights) {
         if (lights.hasOwnProperty(lightid)) {
-          clicker = document.createElement('button')
+          var clicker = document.createElement('button')
           clicker.dataset.lightid = lightid
           clicker.innerHTML = lights[lightid].name
-          clicker.onclick = event => {
-            var lightid = parseInt(event.target.dataset.lightid)
-            this.hueston.updateLight(lightid,
-              {on: !this.hueston.lights[lightid].state.on}
-            )
-          }
-          body.appendChild(clicker)
+          clicker.onclick = event => this.hueston.updateLight(
+            event.target.dataset.lightid,
+            {on: !this.hueston.lights[event.target.dataset.lightid].state.on}
+          )
+          document.getElementById('hueview').appendChild(clicker)
         }
       }
     })
-  }
 }

@@ -1,6 +1,5 @@
 'use strict';
-window.log = statement =>
-    document.getElementById('logger').innerHTML = '<pre>' + statement + '</pre>' + document.getElementById('logger').innerHTML;
+window.log = statement => document.getElementById('logger').innerHTML = '<pre>' + statement + '</pre>' + document.getElementById('logger').innerHTML;
 
 function loadScript(url) {
   return new Promise(function(resolve, reject) {
