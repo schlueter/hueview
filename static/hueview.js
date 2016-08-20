@@ -19,8 +19,7 @@ var HueView = function(hueston) {
     })
 
   var sleep = time => new Promise(resolve => setTimeout(resolve, time))
+  var poll = (promiseFn, time) => promiseFn().then(sleep(time).then(() => poll(promiseFn, time)))
 
-  var pollLights = () => hueston.getLights().then(sleep(1000).then(pollLights))
-
-  pollLights()
+  poll(hueston.getLights, 1000)
 }
