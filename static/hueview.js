@@ -1,5 +1,5 @@
-'use strict';
-var HueView = HueView || function(hueston) {
+var HueView = function(hueston) {
+  'use strict';
   this.hueston = hueston
   this.makeButtonsForLights = () => {
     var body = document.getElementById('hueview'),

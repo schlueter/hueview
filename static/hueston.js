@@ -1,4 +1,4 @@
-window.Hueston = window.Hueston || function () {
+window.Hueston = function () {
   'use strict';
   this.username = 'zWx1OGHpLBfXiZXHgqknbNhVQwnr5sB3p3Go3gPs'
 
