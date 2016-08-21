@@ -2,12 +2,10 @@ window.Hueston = function () {
   'use strict';
   this.username = 'zWx1OGHpLBfXiZXHgqknbNhVQwnr5sB3p3Go3gPs'
 
-  var request = (method, url, data) => {
+  const request = (method, url, data) => {
     return new Promise((resolve, reject) => {
-      var client = new XMLHttpRequest()
-      var uri = url
-
-      client.open(method, uri)
+      const client = new XMLHttpRequest()
+      client.open(method, url)
 
       if (data) {
         if (typeof data === "object") {
@@ -33,7 +31,7 @@ window.Hueston = function () {
   }
 
   this.api = path => {
-    var core = {
+    const core = {
       ajax: (method, path, payload) =>
         request(method, "http://" + this.hubIP + "/api/" + this.username + "/" + path, payload)
           .then(response =>

@@ -4,8 +4,8 @@ window.log = statement => document.getElementById('logger').innerHTML = '<pre>' 
 
 function loadScript(url) {
   return new Promise(function(resolve, reject) {
-    var head = document.getElementsByTagName('head')[0]
-    var script = document.createElement('script')
+    const head = document.getElementsByTagName('head')[0]
+    const script = document.createElement('script')
     script.src = url
     script.async = false
     script.onload = () => resolve(url)
@@ -20,7 +20,7 @@ Promise.all([
   .then(values => main())
   .catch(error => console.log('errored', error))
 
-const main = function() {
+const main = () => {
   const hueston = new Hueston()
   const hueView = new HueView(hueston)
   hueView.makeButtonsForLights()
