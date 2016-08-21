@@ -29,10 +29,10 @@ window.Hueston = function () {
       client.onerror = () => reject(Error(this.statusText))
     })
       .then(response => JSON.parse(response))
-      .catch(error => console.log(error))
+      .catch(error => Error(error))
   }
 
-  this.api = (path, payload) => {
+  this.api = path => {
     var core = {
       ajax: (method, path, payload) =>
         request(method, "http://" + this.hubIP + "/api/" + this.username + "/" + path, payload)
@@ -41,6 +41,7 @@ window.Hueston = function () {
               && response[0].hasOwnProperty('error')
               && response[0].error.description === "unauthorized user" ?
             this.authorize() : response)
+          .catch(error => Error(error))
     }
 
     return {
@@ -86,7 +87,7 @@ window.Hueston = function () {
     this.getHubIP()
       .then(() => this.api('lights').get())
       .then(response => this.lights = response)
-      .catch(error => console.log(error))
+      .catch(error => Error(error))
       // TODO move this to api
 
   this.updateLight = (lightid, configuration) =>

@@ -20,13 +20,10 @@ Promise.all([
   .then(values => main())
   .catch(error => console.log('errored', error))
 
-var main = function() {
-  var hueston = new Hueston()
-  var hueView = new HueView(hueston)
-  hueston.getLights().then(lights => {
-    var numberOfLights = Object.keys(lights).length
-    hueView.makeButtonsForLights(numberOfLights, hueston)
-  })
-  .catch(error => console.log('Error!', error))
+const main = function() {
+  const hueston = new Hueston()
+  const hueView = new HueView(hueston)
+  hueView.makeButtonsForLights()
+    .catch(error => console.log('Error!', error))
 }
 })()
