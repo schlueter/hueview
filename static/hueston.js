@@ -1,6 +1,7 @@
 window.Hueston = function () {
   'use strict';
   this.username = 'zWx1OGHpLBfXiZXHgqknbNhVQwnr5sB3p3Go3gPs'
+  this.storage = localStorage
 
   const request = (method, url, data) => {
     return new Promise((resolve, reject) => {
@@ -33,7 +34,7 @@ window.Hueston = function () {
   this.api = path => {
     const core = {
       ajax: (method, path, payload) =>
-        request(method, "http://" + this.hubIP + "/api/" + this.username + "/" + path, payload)
+        request(method, "http://" + this.storage.getItem('hubIP') + "/api/" + this.username + "/" + path, payload)
           .then(response =>
             Array.isArray(response)
               && response[0].hasOwnProperty('error')
@@ -51,7 +52,7 @@ window.Hueston = function () {
   }
 
   this.authorize = () =>
-    request('POST', 'http://' + this.hubIP + '/api',
+    request('POST', 'http://' + this.storage.getItem('hubIP') + '/api',
          {devicetype: 'hueston#web'})
       .then(response =>
         // Validate response
@@ -60,26 +61,21 @@ window.Hueston = function () {
 
   this.getHubIP = () =>
     // Check if we already have this value
-    this.hubID === undefined || this.hubIP === undefined ?
+    !this.storage.getItem('hubID') || !this.storage.getItem('hubIP') ?
       request('GET', "https://www.meethue.com/api/nupnp")
         .then(response => {
           if (response.length === 1) {
-            this.hubID = response[0].id
-            this.hubIP = response[0].internalipaddress
-            document.cookie = [
-              'hubIP=' + this.hubIP,
-              'hubID=' + this.hubID
-            ].join('; ')
+            this.storage.setItem('hubID', response[0].id)
+            this.storage.setItem('hubIP', response[0].internalipaddress)
           } else {
             // TODO
             alert('Multi hub systems not yet supported')
             reject('Multi hub systems not yet supported')
           }
-          resolve(this.hubIP)
+          resolve(this.storage.getItem('hubIP'))
         })
-        .catch(Error)
-      : new Promise((resolve, reject) => resolve(this.hubIP))
-
+        .catch(error => Error(error))
+      : new Promise((resolve, reject) => resolve(this.storage.getItem('hubIP')))
 
   this.getLights = () =>
     this.getHubIP()

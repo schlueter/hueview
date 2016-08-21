@@ -2,6 +2,8 @@
 'use strict';
 window.log = statement => document.getElementById('logger').innerHTML = '<pre>' + statement + '</pre>' + document.getElementById('logger').innerHTML;
 
+const prefixError = prefix => error => console.error(prefix, error)
+
 function loadScript(url) {
   return new Promise(function(resolve, reject) {
     const head = document.getElementsByTagName('head')[0]
@@ -24,7 +26,5 @@ const main = () => {
   const hueston = new Hueston()
   const hueView = new HueView(hueston)
   hueView.makeButtonsForLights()
-    .catch(prefixError('Error!'))
-}
-const prefixError = prefix => error => console.error(prefix, error)
+    .catch(prefixError('Error!'))}
 })()
