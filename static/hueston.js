@@ -1,6 +1,5 @@
 window.Hueston = function () {
   'use strict';
-  this.username = 'zWx1OGHpLBfXiZXHgqknbNhVQwnr5sB3p3Go3gPs'
   this.storage = localStorage
 
   const request = (method, url, data) => {
@@ -34,7 +33,7 @@ window.Hueston = function () {
   this.api = path => {
     const core = {
       ajax: (method, path, payload) =>
-        request(method, "http://" + this.storage.getItem('hubIP') + "/api/" + this.username + "/" + path, payload)
+        request(method, "http://" + this.storage.getItem('hubIP') + "/api/" + this.storage.getItem('username') + "/" + path, payload)
           .then(response =>
             Array.isArray(response)
               && response[0].hasOwnProperty('error')
@@ -52,12 +51,15 @@ window.Hueston = function () {
   }
 
   this.authorize = () =>
-    request('POST', 'http://' + this.storage.getItem('hubIP') + '/api',
+    !this.storage.getItem('username') ?
+      request('POST', 'http://' + this.storage.getItem('hubIP') + '/api',
          {devicetype: 'hueston#web'})
       .then(response =>
         // Validate response
         Array.isArray(response) && response[0].hasOwnProperty('success') ?
-        this.username = response[0].success.username : Error(response))
+          this.storage.setItem('username', response[0].success.username)
+        : Error(response))
+    : new Promise((resolve, reject) => resolve(this.storage.getItem('username')))
 
   this.getHubIP = () =>
     // Check if we already have this value
@@ -75,7 +77,7 @@ window.Hueston = function () {
           resolve(this.storage.getItem('hubIP'))
         })
         .catch(error => Error(error))
-      : new Promise((resolve, reject) => resolve(this.storage.getItem('hubIP')))
+    : new Promise((resolve, reject) => resolve(this.storage.getItem('hubIP')))
 
   this.getLights = () =>
     this.getHubIP()
