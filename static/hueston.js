@@ -10,7 +10,6 @@ window.Hueston = function () {
       if (data) {
         if (typeof data === "object") {
           client.send(JSON.stringify(data))
-          log(JSON.stringify(data))
         } else {
           Error('request function requires data be an object')
         }
