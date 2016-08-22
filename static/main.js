@@ -1,6 +1,17 @@
 (function () {
 'use strict';
-window.log = statement => document.getElementById('logger').innerHTML = '<pre>' + statement + '</pre>' + document.getElementById('logger').innerHTML;
+(function () {
+  const logView = document.createElement('div')
+  logView.id = 'logger'
+  logView.style = 'color: green; height: 100px; padding: 10px; overflow: scroll; background: black;'
+  const body = document.getElementsByTagName('body')[0]
+  console.log(body.children[0])
+  body.insertBefore(logView, body.children[0])
+  window.log = statement => {
+    logView.innerHTML += '<pre>' + statement
+    logView.scrollTop = logView.scrollHeight
+  }
+})()
 
 const prefixError = prefix => error => console.error(prefix, error)
 
