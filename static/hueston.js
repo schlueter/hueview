@@ -10,7 +10,6 @@ window.Hueston = function () {
       if (data) {
         if (typeof data === "object") {
           client.send(JSON.stringify(data))
-          log(JSON.stringify(data))
         } else {
           Error('request function requires data be an object')
         }
@@ -32,7 +31,9 @@ window.Hueston = function () {
   }
 
   const apiCore = (method, path, payload) =>
-    request(method, "http://" + this.storage.getItem('hubIP') + "/api/" + this.storage.getItem('username') + "/" + path, payload)
+    request(method,
+            "http://" + this.storage.getItem('hubIP') + "/api/" + this.storage.getItem('username') + "/" + path,
+            payload)
       .then(response =>
         Array.isArray(response)
           && response[0].hasOwnProperty('error')
@@ -84,4 +85,12 @@ window.Hueston = function () {
 
   this.updateLight = (lightid, configuration) =>
     this.api('lights/' + lightid + '/state').put(configuration)
+      .then(response =>
+        response.filter(attribute => 'success' in attribute)
+          .map(attribute =>
+            Object.keys(attribute.success)
+              .forEach(key =>
+                this.lights[lightid].state[key.replace(/\/lights\/\d\/state\//, '')] = attribute.success[key]
+              )))
+      .catch(error => Error(error))
 }
