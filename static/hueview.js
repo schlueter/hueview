@@ -2,7 +2,7 @@ window.HueView = function(hueston) {
   'use strict';
   this.makeButtonsForLights = () =>
     hueston.getLights().then(() => {
-      const pollLights = window.setInterval(hueston.getLights, 2000)
+      const pollLights = window.setInterval(hueston.getLights, 30000)
       const setLight = event => hueston.updateLight(
         event.target.dataset.lightid,
         {

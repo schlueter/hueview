@@ -2,14 +2,15 @@ window.Hueston = function () {
   'use strict';
   this.storage = localStorage
 
-  const request = (method, url, data) => {
-    return new Promise((resolve, reject) => {
+  const request = (method, url, data) =>
+    new Promise((resolve, reject) => {
       const client = new XMLHttpRequest()
       client.open(method, url)
 
       if (data) {
         if (typeof data === "object") {
           client.send(JSON.stringify(data))
+          log(JSON.stringify(data))
         } else {
           Error('request function requires data be an object')
         }
@@ -30,25 +31,21 @@ window.Hueston = function () {
       .catch(Error)
   }
 
-  this.api = path => {
-    const core = {
-      ajax: (method, path, payload) =>
-        request(method, "http://" + this.storage.getItem('hubIP') + "/api/" + this.storage.getItem('username') + "/" + path, payload)
-          .then(response =>
-            Array.isArray(response)
-              && response[0].hasOwnProperty('error')
-              && response[0].error.description === "unauthorized user" ?
-            this.authorize() : response)
-          .catch(Error)
-    }
+  const apiCore = (method, path, payload) =>
+    request(method, "http://" + this.storage.getItem('hubIP') + "/api/" + this.storage.getItem('username') + "/" + path, payload)
+      .then(response =>
+        Array.isArray(response)
+          && response[0].hasOwnProperty('error')
+          && response[0].error.description === "unauthorized user" ?
+        this.authorize() : response)
+      .catch(Error)
 
-    return {
-      delete: payload => core.ajax('DELETE', path, payload),
-      get: payload => core.ajax('GET', path, payload),
-      post: payload => core.ajax('POST', path, payload),
-      put: payload => core.ajax('PUT', path, payload)
-    }
-  }
+  this.api = path => ({
+    delete: payload => apiCore('DELETE', path, payload),
+    get: payload => apiCore('GET', path, payload),
+    post: payload => apiCore('POST', path, payload),
+    put: payload => apiCore('PUT', path, payload)
+  })
 
   this.authorize = () =>
     !this.storage.getItem('username') ?
@@ -84,7 +81,6 @@ window.Hueston = function () {
       .then(() => this.api('lights').get())
       .then(response => this.lights = response)
       .catch(Error)
-      // TODO move this to api
 
   this.updateLight = (lightid, configuration) =>
     this.api('lights/' + lightid + '/state').put(configuration)
