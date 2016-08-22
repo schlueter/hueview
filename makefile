@@ -1,6 +1,6 @@
 default: sass
 
-.PHONY: default sass lint lint-sass lint-js
+.PHONY: default sass lint lint-sass lint-js edit
 
 lint: lint-sass lint-js
 
@@ -14,3 +14,10 @@ lint-sass: src/sass/*.sass
 
 lint-js: static/*.js
 	jshint static
+
+edit:
+	find . -type f \
+		-not -regex '.*\.git.*' \
+		-not -regex '.*\.sassc' \
+		-not -regex '.*\.css.map' \
+		-exec vim {} +
