@@ -19,5 +19,5 @@ edit:
 	find . -type f \
 		-not -regex '.*\.git.*' \
 		-not -regex '.*\.sassc' \
-		-not -regex '.*\.css.map' \
+		-not -regex '.*\.css.*' \
 		-exec vim {} +
