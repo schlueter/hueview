@@ -29,12 +29,21 @@ Promise.all([
   'static/hueston.js',
   'static/hueview.js'
 ].map(loadScript))
+<<<<<<< a61b8c13b04e46093fed71120fa6294ca8856092
   .then(values => main())
   .catch(prefixError('errored'))
+=======
+  .then(() => main())
+  .catch(error => Error(error))
+>>>>>>> Break up view functions
 
 const main = () => {
   const hueston = new Hueston()
   const hueView = new HueView(hueston)
+<<<<<<< a61b8c13b04e46093fed71120fa6294ca8856092
   hueView.makeButtonsForLights()
     .catch(prefixError('Error!'))}
+=======
+}
+>>>>>>> Break up view functions
 })()
