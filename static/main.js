@@ -18,12 +18,13 @@ Promise.all([
   'static/hueview.js'
 ].map(loadScript))
   .then(values => main())
-  .catch(error => console.log('errored', error))
+  .catch(prefixError('errored'))
 
 const main = () => {
   const hueston = new Hueston()
   const hueView = new HueView(hueston)
   hueView.makeButtonsForLights()
-    .catch(error => console.log('Error!', error))
+    .catch(prefixError('Error!'))
 }
+const prefixError = prefix => error => console.error(prefix, error)
 })()

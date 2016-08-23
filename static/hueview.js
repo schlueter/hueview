@@ -16,5 +16,5 @@ window.HueView = function(hueston) {
           document.getElementById('hueview').appendChild(clicker)
         }
       }})
-    .catch(error => Error(error))
+    .catch(Error)
 }
