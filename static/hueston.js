@@ -92,6 +92,16 @@ window.Hueston = function () {
       .then(response => this.lights = response)
       .catch(Error)
 
+  // const waitForNewLights = () => this.api('lights/new').get()
+
+  this.getNewLights = () =>
+    this.getHubIP()
+      .then(() => this.api('lights').post())
+      .then(() => this.api('lights/new').get())
+      .then(response => log(JSON.stringify(response)))
+      .then(response => this.lights = response)
+      .catch(error => Error(error))
+
   this.updateLight = (lightid, configuration) =>
     this.api('lights/' + lightid + '/state').put(configuration)
       .then(response => response.filter(attribute => 'success' in attribute)
