@@ -28,7 +28,6 @@ window.Hueston = function () {
     })
       .then(response => JSON.parse(response))
       .catch(Error)
-  }
 
   const apiCore = (method, path, payload) =>
     request(method,
