@@ -12,15 +12,24 @@ window.HueView = function(hueston) {
     })
 
   const createLightControl = lightid => {
-    const button = document.createElement('button')
-    button.dataset.lightid = lightid
-    button.dataset.bri = 254
-    button.dataset.hue = 10000
-    button.dataset.sat = 254
-    button.dataset.transitiontime = 0
-    button.textContent = hueston.lights[lightid].name
-    button.onclick = setLight
-    document.getElementById('hueview').appendChild(button)
+    const lightControl = document.createElement('div')
+    const lightTitle = document.createElement('h3')
+    lightTitle.textContent = hueston.lights[lightid].name
+    lightControl.appendChild(lightTitle)
+    const lightToggle = document.createElement('button')
+    lightToggle.dataset.lightid = lightid
+    lightToggle.dataset.bri = 254
+    lightToggle.dataset.hue = 10000
+    lightToggle.dataset.sat = 254
+    lightToggle.dataset.transitiontime = 0
+    lightToggle.textContent = 'Toggle'
+    lightToggle.onclick = setLight
+    lightControl.appendChild(lightToggle)
+    const lightDelete = document.createElement('button')
+    lightDelete.textContent('Delete')
+    lightDelete.onclick = () => hueston.deleteLight(lightid)
+    lightControl.appendChild(lightDelete)
+    document.getElementById('hueview').appendChild(lightControl)
   }
 
   const createLightControls = lights => {
