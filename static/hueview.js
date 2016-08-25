@@ -39,11 +39,8 @@ window.HueView = function(hueston) {
     document.getElementById('hueview').appendChild(button)
   }
 
-  this.init = () =>
-    hueston.getLights()
-      .then(lights => createLightControls(lights))
-      .then(() => createAddNewLightButton())
-      .catch(Error)
-
-  this.init()
+  hueston.getLights()
+    .then(lights => createLightControls(lights))
+    .then(() => createAddNewLightButton())
+    .catch(Error)
 }
