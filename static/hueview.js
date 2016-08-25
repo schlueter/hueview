@@ -12,24 +12,25 @@ window.HueView = function(hueston) {
     })
 
   const createLightControl = lightid => {
-    const lightControl = document.createElement('div')
-      const lightTitle = document.createElement('h3')
-        lightTitle.textContent = hueston.lights[lightid].name
-        lightControl.appendChild(lightTitle)
-      const lightToggle = document.createElement('button')
-        lightToggle.dataset.lightid = lightid
-        lightToggle.dataset.bri = 254
-        lightToggle.dataset.hue = 10000
-        lightToggle.dataset.sat = 254
-        lightToggle.dataset.transitiontime = 0
-        lightToggle.textContent = 'Toggle'
-        lightToggle.onclick = setLight
-        lightControl.appendChild(lightToggle)
-      const lightDelete = document.createElement('button')
-        lightDelete.textContent('Delete')
-        lightDelete.onclick = () => hueston.deleteLight(lightid)
-        lightControl.appendChild(lightDelete)
-    document.getElementById('hueview').appendChild(lightControl)
+    const control = document.createElement('div')
+    const toggle = document.createElement('button')
+    const title = document.createElement('h3')
+    const deleteLight = document.createElement('button')
+    title.textContent = hueston.lights[lightid].name
+    control.appendChild(title)
+    toggle.dataset.lightid = lightid
+    toggle.dataset.bri = 254
+    toggle.dataset.hue = 10000
+    toggle.dataset.sat = 254
+    toggle.dataset.transitiontime = 0
+    toggle.textContent = hueston.lights[lightid].name
+    toggle.textContent = 'Toggle'
+    toggle.onclick = setLight
+    control.appendChild(toggle)
+    deleteLight.textContent = 'Delete'
+    deleteLight.onclick = () => hueston.deleteLight(lightid)
+    control.appendChild(deleteLight)
+    document.getElementById('hueview').appendChild(control)
   }
 
   const createLightControls = lights => {
