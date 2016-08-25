@@ -13,11 +13,12 @@ window.HueView = function(hueston) {
 
   const createLightControl = lightid => {
     const control = document.createElement('div')
-    const toggle = document.createElement('button')
+
     const title = document.createElement('h3')
-    const deleteLight = document.createElement('button')
     title.textContent = hueston.lights[lightid].name
     control.appendChild(title)
+
+    const toggle = document.createElement('button')
     toggle.dataset.lightid = lightid
     toggle.dataset.bri = 254
     toggle.dataset.hue = 10000
@@ -27,9 +28,18 @@ window.HueView = function(hueston) {
     toggle.textContent = 'Toggle'
     toggle.onclick = setLight
     control.appendChild(toggle)
+
+    const deleteLight = document.createElement('button')
     deleteLight.textContent = 'Delete'
     deleteLight.onclick = () => hueston.deleteLight(lightid)
     control.appendChild(deleteLight)
+
+    const form = document.createElement('form')
+
+    const briInput = document.createElement('input')
+    form.appendChild(briInput)
+    control.appendChild(form)
+
     document.getElementById('hueview').appendChild(control)
   }
 
