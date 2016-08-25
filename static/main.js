@@ -13,7 +13,6 @@
 
 ;(function () {
 'use strict';
-const prefixError = prefix => error => console.error(prefix, error)
 function loadScript(url) {
   return new Promise(function(resolve, reject) {
     const head = document.getElementsByTagName('head')[0]
@@ -29,11 +28,6 @@ Promise.all([
   'static/hueston.js',
   'static/hueview.js'
 ].map(loadScript))
-  .then(() => main())
-  .catch(prefixError('errored'))
-
-const main = () => {
-  const hueston = new Hueston()
-  const hueView = new HueView(hueston)
-}
+  .then(() => new HueView(new Hueston()))
+  .catch(error => console.error('Error loading scripts:', error))
 })()
