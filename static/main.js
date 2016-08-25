@@ -1,4 +1,4 @@
-(function () {
+~function () {
   'use strict';
   const logView = document.createElement('div')
   logView.id = 'logger'
@@ -9,9 +9,9 @@
     logView.innerHTML += '<pre>' + args.join(' ')
     logView.scrollTop = logView.scrollHeight
   }
-})()
+}()
 
-;(function () {
+~function () {
 'use strict';
 function loadScript(url) {
   return new Promise(function(resolve, reject) {
@@ -30,4 +30,4 @@ Promise.all([
 ].map(loadScript))
   .then(() => new HueView(new Hueston()))
   .catch(error => console.error('Error loading scripts:', error))
-})()
+}()
