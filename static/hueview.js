@@ -1,43 +1,58 @@
 window.HueView = function(hueston) {
   'use strict';
+  this.transitiontime = 0
 
-  const setLight = event => hueston.updateLight(
-    event.target.dataset.lightid,
-    {
-      on: !hueston.lights[event.target.dataset.lightid].state.on,
-      bri: parseInt(event.target.dataset.bri),
-      hue: parseInt(event.target.dataset.hue),
-      sat: parseInt(event.target.dataset.sat),
-      transitiontime: parseInt(event.target.dataset.transitiontime)
-    })
+  const setLight = event => {
+    const form = event.target
+    console.log(event)
+    const update = {
+      on: !hueston.lights[form.dataset.lightid].state.on,
+      bri: parseInt(form.elements.bri.value),
+      hue: parseInt(form.elements.hue.value),
+      sat: parseInt(form.elements.sat.value),
+      transitiontime: this.transitiontime
+    }
+
+    hueston.updateLight(form.dataset.lightid, update)
+    return false
+  }
 
   const createLightControl = lightid => {
     const control = document.createElement('div')
+
+    const form = document.createElement('form')
+    form.dataset.lightid = lightid
 
     const title = document.createElement('h3')
     title.textContent = hueston.lights[lightid].name
     control.appendChild(title)
 
     const toggle = document.createElement('button')
-    toggle.dataset.lightid = lightid
-    toggle.dataset.bri = 254
-    toggle.dataset.hue = 10000
-    toggle.dataset.sat = 254
-    toggle.dataset.transitiontime = 0
-    toggle.textContent = hueston.lights[lightid].name
     toggle.textContent = 'Toggle'
-    toggle.onclick = setLight
-    control.appendChild(toggle)
+    form.appendChild(toggle)
 
     const deleteLight = document.createElement('button')
     deleteLight.textContent = 'Delete'
     deleteLight.onclick = () => hueston.deleteLight(lightid)
     control.appendChild(deleteLight)
 
-    const form = document.createElement('form')
-
     const briInput = document.createElement('input')
+    briInput.name = 'bri'
+    briInput.defaultValue = 'bri'
     form.appendChild(briInput)
+
+    const hueInput = document.createElement('input')
+    hueInput.name = 'hue'
+    hueInput.defaultValue = 'hue'
+    form.appendChild(hueInput)
+
+    const satInput = document.createElement('input')
+    satInput.name = 'sat'
+    satInput.defaultValue = 'sat'
+    form.appendChild(satInput)
+
+    window.form = form
+    form.onsubmit = setLight
     control.appendChild(form)
 
     document.getElementById('hueview').appendChild(control)
