@@ -2,42 +2,37 @@ window.HueView = function(hueston) {
   'use strict';
   this.transitiontime = 0
 
-  const createLightControl = (lightid, settings) => {
+  const createLightControl = (lightid, config) => {
     const control = document.createElement('div')
-
     const title = document.createElement('h3')
-    title.textContent = settings.name
+    title.onclick = () => hueston.updateLight(lightid, {on: !config.state.on})
+    title.textContent = config.name
     control.appendChild(title)
 
-    const toggle = document.createElement('button')
-    toggle.textContent = 'Toggle'
-    control.appendChild(toggle)
+    const settings = {}
 
-    const deleteLight = document.createElement('button')
-    deleteLight.textContent = 'Delete'
-    deleteLight.onclick = () => hueston.deleteLight(lightid)
-    control.appendChild(deleteLight)
-
-    const lightSettings = settings
-
-    const inputConfigs = [
+    const attributes = [
       {name: 'bri', min: 0, max: 254},
-      {name: 'sat', min: 0, max: 254},
-      {name: 'hue', min: 0, max: 65535}
+      {name: 'hue', min: 0, max: 65535},
+      {name: 'sat', min: 0, max: 254}
     ]
 
-    inputConfigs.forEach(config => {
-      const input = document.createElement('input')
-      input.placeholder = config.placeholder
-      input.defaultValue = settings.state[config.name]
-      input.oninput = event => lightSettings[config.name] = parseInt(event.target.value)
-      input.onkeydown = event => {
-        if (event.key === "Enter") {
-          lightSettings.on = true
-          hueston.updateLight(lightid, lightSettings)
+    attributes.forEach(attribute => {
+      if (attribute.name in config.state) {
+        const label = document.createElement('label')
+        label.innerHTML = attribute.name
+        const input = document.createElement('input')
+        input.defaultValue = config.state[attribute.name]
+        input.oninput = event => settings[attribute.name] = parseInt(event.target.value)
+        input.onkeydown = event => {
+          if (event.key === 'Enter') {
+              settings.on = true
+              hueston.updateLight(lightid, settings)
+          }
         }
+        label.appendChild(input)
+        control.appendChild(label)
       }
-      control.appendChild(input)
     })
 
     document.getElementById('hueview').appendChild(control)
