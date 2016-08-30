@@ -2,26 +2,8 @@ window.HueView = function(hueston) {
   'use strict';
   this.transitiontime = 0
 
-  const setLight = event => {
-    const form = event.target
-    console.log(event)
-    const update = {
-      on: !hueston.lights[form.dataset.lightid].state.on,
-      bri: parseInt(form.elements.bri.value),
-      hue: parseInt(form.elements.hue.value),
-      sat: parseInt(form.elements.sat.value),
-      transitiontime: this.transitiontime
-    }
-
-    hueston.updateLight(form.dataset.lightid, update)
-    return false
-  }
-
   const createLightControl = lightid => {
     const control = document.createElement('div')
-
-    const form = document.createElement('form')
-    form.dataset.lightid = lightid
 
     const title = document.createElement('h3')
     title.textContent = hueston.lights[lightid].name
@@ -29,32 +11,36 @@ window.HueView = function(hueston) {
 
     const toggle = document.createElement('button')
     toggle.textContent = 'Toggle'
-    form.appendChild(toggle)
+    control.appendChild(toggle)
 
     const deleteLight = document.createElement('button')
     deleteLight.textContent = 'Delete'
     deleteLight.onclick = () => hueston.deleteLight(lightid)
     control.appendChild(deleteLight)
 
-    const briInput = document.createElement('input')
-    briInput.name = 'bri'
-    briInput.defaultValue = 'bri'
-    form.appendChild(briInput)
+    const lightSettings = {}
 
-    const hueInput = document.createElement('input')
-    hueInput.name = 'hue'
-    hueInput.defaultValue = 'hue'
-    form.appendChild(hueInput)
+    const inputConfigs = [
+      {name: 'bri', placeholder: 'brightness', min: 0, max: 254},
+      {name: 'sat', placeholder: 'saturation', min: 0, max: 254},
+      {name: 'hue', placeholder: 'hue'       , min: 0, max: 65535}
+    ]
 
-    const satInput = document.createElement('input')
-    satInput.name = 'sat'
-    satInput.defaultValue = 'sat'
-    form.appendChild(satInput)
+    inputConfigs.forEach(config => {
+      const input = document.createElement('input')
+      input.placeholder = config.placeholder
+      input.oninput = event => lightSettings[config.name] = parseInt(event.target.value)
+      input.onkeydown = event => {
+        console.log(event)
+        if (event.key === "Enter") {
+          lightSettings.on = true
+          hueston.updateLight(lightid, lightSettings)
+        }
+      }
+      control.appendChild(input)
+    })
 
-    window.form = form
-    form.onsubmit = setLight
-    control.appendChild(form)
-
+    window.control = control
     document.getElementById('hueview').appendChild(control)
   }
 
