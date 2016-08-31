@@ -1,16 +1,5 @@
-~function () {
+!function () {
 'use strict';
-function loadScript(url) {
-  return new Promise(function(resolve, reject) {
-    const head = document.getElementsByTagName('head')[0]
-    const script = document.createElement('script')
-    script.src = url
-    script.async = false
-    script.onload = () => resolve(url)
-    head.appendChild(script)
-  })
-}
-
 Promise.all([
   'static/hueston.js',
   'static/hueview.js',
