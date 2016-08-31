@@ -73,12 +73,22 @@ window.Hueston = function () {
           }
           resolve(this.storage.getItem('hubIP'))
         })
-        .catch(error => Error(error))
+        .catch(Error)
     : new Promise((resolve, reject) => resolve(this.storage.getItem('hubIP')))
 
   this.getLights = () =>
     this.getHubIP()
       .then(() => this.api('lights').get())
+      .then(response => this.lights = response)
+      .catch(Error)
+
+  // const waitForNewLights = () => this.api('lights/new').get()
+
+  this.getNewLights = () =>
+    this.getHubIP()
+      .then(() => this.api('lights').post())
+      .then(() => this.api('lights/new').get())
+      .then(response => log(JSON.stringify(response)))
       .then(response => this.lights = response)
       .catch(Error)
 
@@ -99,8 +109,7 @@ window.Hueston = function () {
           .forEach(key =>
             this.lights[lightid].state[key.replace(/\/lights\/\d\/state\//, '')] = attribute.success[key]
           )))
-      .catch(error => Error(error))
+      .catch(Error)
 
-  this.deleteLight = lightid => this.api('lights/' + lightid).delete()
-    .catch(error => Error(error))
+  this.deleteLight = lightid => this.api('lights/' + lightid).delete().catch(Error)
 }

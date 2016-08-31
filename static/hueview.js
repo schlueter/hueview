@@ -1,32 +1,47 @@
 window.HueView = function(hueston) {
   'use strict';
+  this.transitiontime = 0
 
-  const setLight = event => hueston.updateLight(
-    event.target.dataset.lightid,
-    {
-      on: !hueston.lights[event.target.dataset.lightid].state.on,
-      bri: parseInt(event.target.dataset.bri),
-      hue: parseInt(event.target.dataset.hue),
-      sat: parseInt(event.target.dataset.sat),
-      transitiontime: parseInt(event.target.dataset.transitiontime)
+  const createLightControl = (lightid, config) => {
+    const control = document.createElement('div')
+    const title = document.createElement('h3')
+    title.onclick = () => hueston.updateLight(lightid, {on: !config.state.on})
+    title.textContent = config.name
+    control.appendChild(title)
+
+    const settings = {}
+
+    const attributes = [
+      {name: 'bri', min: 0, max: 254},
+      {name: 'hue', min: 0, max: 65535},
+      {name: 'sat', min: 0, max: 254}
+    ]
+
+    attributes.forEach(attribute => {
+      if (attribute.name in config.state) {
+        const label = document.createElement('label')
+        label.innerHTML = attribute.name
+        const input = document.createElement('input')
+        input.defaultValue = config.state[attribute.name]
+        input.oninput = event => settings[attribute.name] = parseInt(event.target.value)
+        input.onkeydown = event => {
+          if (event.key === 'Enter') {
+              settings.on = true
+              hueston.updateLight(lightid, settings)
+          }
+        }
+        label.appendChild(input)
+        control.appendChild(label)
+      }
     })
 
-  const createLightControl = lightid => {
-    const button = document.createElement('button')
-    button.dataset.lightid = lightid
-    button.dataset.bri = 254
-    button.dataset.hue = 10000
-    button.dataset.sat = 254
-    button.dataset.transitiontime = 0
-    button.textContent = hueston.lights[lightid].name
-    button.onclick = setLight
-    document.getElementById('hueview').appendChild(button)
+    document.getElementById('hueview').appendChild(control)
   }
 
   const createLightControls = lights => {
     for (let lightid in lights) {
       if(/^(\-|\+)?([0-9]+)$/.test(lightid)) {
-        createLightControl(lightid)
+        createLightControl(lightid, lights[lightid])
       }
     }
   }
