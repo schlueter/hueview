@@ -20,15 +20,24 @@ window.HueView = function(hueston) {
 
     attributes.forEach(attribute => {
       if (attribute.name === 'on') {
-        const icon = document.createElement('i')
-        icon.classList.add('fa')
-        icon.classList.add(config.state.on ? 'fa-toggle-on' : 'fa-toggle-off')
-        icon.onclick = () => hueston.updateLight(lightid, {on: !config.state.on})
+        const toggle = () => hueston.updateLight(lightid, {on: !config.state.on})
                                .then(() => {
                                  icon.classList.remove(config.state.on ? 'fa-toggle-off' : 'fa-toggle-on')
                                  icon.classList.add(config.state.on ? 'fa-toggle-on' : 'fa-toggle-off')
                                })
-        control.appendChild(icon)
+        const anchor = document.createElement('a')
+        anchor.tabIndex = 0
+        anchor.onclick = toggle
+        anchor.onkeydown = event => {
+          if (event.key === 'Enter') {
+            toggle()
+          }
+        }
+        const icon = document.createElement('i')
+        icon.classList.add('fa')
+        icon.classList.add(config.state.on ? 'fa-toggle-on' : 'fa-toggle-off')
+        anchor.appendChild(icon)
+        control.appendChild(anchor)
       } else if (attribute.name in config.state) {
         const label = document.createElement('label')
         label.innerHTML = attribute.name
@@ -37,7 +46,6 @@ window.HueView = function(hueston) {
         input.oninput = event => settings[attribute.name] = parseInt(event.target.value)
         input.onkeydown = event => {
           if (event.key === 'Enter') {
-              settings.on = true
               hueston.updateLight(lightid, settings)
           }
         }
