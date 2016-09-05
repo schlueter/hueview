@@ -22,20 +22,32 @@ window.HueView = function(hueston) {
       if (attribute.name === 'on') {
         const toggle = () => hueston.updateLight(lightid, {on: !config.state.on})
                                .then(() => {
-                                 icon.classList.remove(config.state.on ? 'fa-toggle-off' : 'fa-toggle-on')
-                                 icon.classList.add(config.state.on ? 'fa-toggle-on' : 'fa-toggle-off')
+                                 if (config.state.on) {
+                                   icon.classList.remove('fa-toggle-off')
+                                   icon.classList.add('fa-toggle-on')
+                                 } else {
+                                   icon.classList.remove('fa-toggle-on')
+                                   icon.classList.add('fa-toggle-off')
+                                 }
                                })
         const anchor = document.createElement('a')
         anchor.tabIndex = 0
         anchor.onclick = toggle
         anchor.onkeydown = event => {
-          if (event.key === 'Enter') {
+          if (event.key === 'Enter' || event.key === ' ') {
             toggle()
           }
         }
         const icon = document.createElement('i')
         icon.classList.add('fa')
-        icon.classList.add(config.state.on ? 'fa-toggle-on' : 'fa-toggle-off')
+        icon.setAttribute('aria-hidden', true)
+        // Set up initial state
+        if (config.state.on) {
+          icon.classList.add('fa-toggle-on')
+        } else {
+          icon.classList.add('fa-toggle-off')
+        }
+        anchor.setAttribute('aria-label', 'Toggle light ' + lightid)
         anchor.appendChild(icon)
         control.appendChild(anchor)
       } else if (attribute.name in config.state) {
