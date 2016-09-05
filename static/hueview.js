@@ -83,7 +83,8 @@ window.HueView = function(hueston) {
             () => {
               delete settings.hue
               delete settings.sat
-              return hueston.updateLight(lightid, settings))
+              return hueston.updateLight(lightid, settings)
+            })
         } else {
           createAttributeControl(parseInt, () => hueston.updateLight(lightid, settings))
         }
