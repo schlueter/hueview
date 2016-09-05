@@ -12,13 +12,45 @@ window.HueView = function(hueston) {
     const settings = {}
 
     const attributes = [
+      {name: 'on', min: false, max: true},
       {name: 'bri', min: 0, max: 254},
       {name: 'hue', min: 0, max: 65535},
       {name: 'sat', min: 0, max: 254}
     ]
 
     attributes.forEach(attribute => {
-      if (attribute.name in config.state) {
+      if (attribute.name === 'on') {
+        const toggle = () => hueston.updateLight(lightid, {on: !config.state.on})
+                               .then(() => {
+                                 if (config.state.on) {
+                                   icon.classList.remove('fa-toggle-off')
+                                   icon.classList.add('fa-toggle-on')
+                                 } else {
+                                   icon.classList.remove('fa-toggle-on')
+                                   icon.classList.add('fa-toggle-off')
+                                 }
+                               })
+        const anchor = document.createElement('a')
+        anchor.tabIndex = 0
+        anchor.onclick = toggle
+        anchor.onkeydown = event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            toggle()
+          }
+        }
+        const icon = document.createElement('i')
+        icon.classList.add('fa')
+        icon.setAttribute('aria-hidden', true)
+        // Set up initial state
+        if (config.state.on) {
+          icon.classList.add('fa-toggle-on')
+        } else {
+          icon.classList.add('fa-toggle-off')
+        }
+        anchor.setAttribute('aria-label', 'Toggle light ' + lightid)
+        anchor.appendChild(icon)
+        control.appendChild(anchor)
+      } else if (attribute.name in config.state) {
         const label = document.createElement('label')
         label.innerHTML = attribute.name
         const input = document.createElement('input')
@@ -26,7 +58,6 @@ window.HueView = function(hueston) {
         input.oninput = event => settings[attribute.name] = parseInt(event.target.value)
         input.onkeydown = event => {
           if (event.key === 'Enter') {
-              settings.on = true
               hueston.updateLight(lightid, settings)
           }
         }

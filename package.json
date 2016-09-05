@@ -1,0 +1,22 @@
+{
+  "name": "hueview",
+  "version": "1.0.0",
+  "description": "Browser based controller for Hue lights",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schlueter/hueview.git"
+  },
+  "author": "Brandon Schlueter",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/schlueter/hueview/issues"
+  },
+  "homepage": "https://github.com/schlueter/hueview#readme",
+  "dependencies": {
+    "font-awesome": "^4.2.0"
+  }
+}
