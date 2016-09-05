@@ -12,13 +12,24 @@ window.HueView = function(hueston) {
     const settings = {}
 
     const attributes = [
+      {name: 'on', min: false, max: true},
       {name: 'bri', min: 0, max: 254},
       {name: 'hue', min: 0, max: 65535},
       {name: 'sat', min: 0, max: 254}
     ]
 
     attributes.forEach(attribute => {
-      if (attribute.name in config.state) {
+      if (attribute.name === 'on') {
+        const icon = document.createElement('i')
+        icon.classList.add('fa')
+        icon.classList.add(config.state.on ? 'fa-toggle-on' : 'fa-toggle-off')
+        icon.onclick = () => hueston.updateLight(lightid, {on: !config.state.on})
+                               .then(() => {
+                                 icon.classList.remove(config.state.on ? 'fa-toggle-off' : 'fa-toggle-on')
+                                 icon.classList.add(config.state.on ? 'fa-toggle-on' : 'fa-toggle-off')
+                               })
+        control.appendChild(icon)
+      } else if (attribute.name in config.state) {
         const label = document.createElement('label')
         label.innerHTML = attribute.name
         const input = document.createElement('input')
