@@ -10,7 +10,7 @@ node_modules:
 sass: static/main.css
 
 js:
-	mkdir -p static
+	@mkdir -p static
 	cp src/js/* static/
 
 static/main.css: static/fonts src/sass/*.sass
@@ -24,7 +24,7 @@ lint-sass: src/sass/*.sass
 	sass --check src/sass/main.sass
 
 static/fonts: node_modules
-	mkdir -p static/fonts
+	@mkdir -p static/fonts
 	cp node_modules/font-awesome/fonts/*-webfont.* static/fonts
 
 lint-js:
@@ -36,5 +36,8 @@ clean:
 edit:
 	find src -type f -exec vim {} +
 
-watch: node_modules
-	node_modules/wr/bin/wr 'make js sass' src
+watch:
+	@if [ -f node_modules/wr/bin/wr ]; \
+	then node_modules/wr/bin/wr 'make js sass' src; \
+	else printf '\x1B[31mPlease run `make node_modules` and try again.\x1B[0m'; \
+fi
