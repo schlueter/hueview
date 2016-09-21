@@ -1,10 +1,17 @@
-default: sass
+default: sass js
 
-.PHONY: default sass lint lint-sass lint-js edit
+.PHONY: default sass lint lint-sass lint-js edit clean js
 
 lint: lint-sass lint-js
 
+node_modules:
+	npm install
+
 sass: static/main.css
+
+js:
+	mkdir -p static
+	cp src/js/* static/
 
 static/main.css: static/fonts src/sass/*.sass
 	sassc --style expanded \
@@ -16,18 +23,21 @@ static/main.css: static/fonts src/sass/*.sass
 lint-sass: src/sass/*.sass
 	sass --check src/sass/main.sass
 
-static/fonts: node_modules/font-awesome/fonts/*-webfont.*
-	mkdir static/fonts
+static/fonts: node_modules
+	mkdir -p static/fonts
 	cp node_modules/font-awesome/fonts/*-webfont.* static/fonts
 
-lint-js: static/*.js
-	jshint static
+lint-js:
+	jshint src/js
+
+clean:
+	rm -rf node_modules static
 
 edit:
 	find . -type f \
-		-not -regex '.*\.git.*' \
-		-not -regex '.*\.sassc' \
-		-not -regex '.*\.css.*' \
-		-not -regex '.*node_modules.*' \
-		-not -regex '.*fonts.*' \
+		-not \( \
+		  -regex '.*\..*' \
+		  -o -regex '.*node_modules.*' \
+		  -o -regex '.*makefile.*' \
+		\) \
 		-exec vim {} +
