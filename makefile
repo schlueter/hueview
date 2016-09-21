@@ -1,6 +1,6 @@
-default: sass js
+default: clean | sass js
 
-.PHONY: default sass lint lint-sass lint-js edit clean js
+.PHONY: default sass lint lint-sass lint-js edit clean js node_modules watch
 
 lint: lint-sass lint-js
 
@@ -34,10 +34,7 @@ clean:
 	rm -rf node_modules static
 
 edit:
-	find . -type f \
-		-not \( \
-		  -regex '.*\..*' \
-		  -o -regex '.*node_modules.*' \
-		  -o -regex '.*makefile.*' \
-		\) \
-		-exec vim {} +
+	find src -type f -exec vim {} +
+
+watch: node_modules
+	node_modules/wr/bin/wr 'make js sass' src
