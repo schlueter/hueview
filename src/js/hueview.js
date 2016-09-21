@@ -17,68 +17,70 @@ window.HueView = function(hueston) {
       {name: 'xy', min: [0,0], max: [0.9999, 0.9999]},
     ]
 
+    const createAttributeControl = (attribute, inputParser, updateFn) => {
+      const label = document.createElement('label')
+      label.innerHTML = attribute.name
+      const input = document.createElement('input')
+      input.defaultValue = config.state[attribute.name]
+      input.oninput = event => settings[attribute.name] = inputParser(event.target.value)
+      input.onkeydown = event => {
+        if (event.key === 'Enter') {
+          updateFn()
+        }
+      }
+      label.appendChild(input)
+      control.appendChild(label)
+    }
+
     attributes.forEach(attribute => {
-      if (attribute.name === 'on') {
-        const updateFAToggle = () => {
+      if (attribute.name in config.state) {
+        if (attribute.name === 'on') {
+          const updateFAToggle = () => {
+              if (config.state.on) {
+                icon.classList.remove('fa-toggle-off')
+                icon.classList.add('fa-toggle-on')
+              } else {
+                icon.classList.remove('fa-toggle-on')
+                icon.classList.add('fa-toggle-off')
+              }
+            }
+
+          const toggle = () => {
             if (config.state.on) {
-              icon.classList.remove('fa-toggle-off')
-              icon.classList.add('fa-toggle-on')
+              settings.on = false
+              hueston.updateLight(lightid, {on: false})
+                .then(updateFAToggle)
             } else {
-              icon.classList.remove('fa-toggle-on')
-              icon.classList.add('fa-toggle-off')
+              settings.on = true
+              hueston.updateLight(lightid, settings)
+                .then(updateFAToggle)
             }
           }
 
-        const toggle = () => {
+          const anchor = document.createElement('a')
+          anchor.tabIndex = 0
+          anchor.onclick = toggle
+          anchor.onkeydown = event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              toggle()
+            }
+          }
+          const icon = document.createElement('i')
+          icon.classList.add('fa')
+          icon.setAttribute('aria-hidden', true)
+          // Set up initial state
           if (config.state.on) {
-            settings.on = false
-            hueston.updateLight(lightid, {on: false})
-              .then(updateFAToggle)
+            icon.classList.add('fa-toggle-on')
           } else {
-            settings.on = true
-            hueston.updateLight(lightid, settings)
-              .then(updateFAToggle)
+            icon.classList.add('fa-toggle-off')
           }
-        }
+          anchor.setAttribute('aria-label', 'Toggle light ' + lightid)
+          anchor.appendChild(icon)
+          control.appendChild(anchor)
 
-        const anchor = document.createElement('a')
-        anchor.tabIndex = 0
-        anchor.onclick = toggle
-        anchor.onkeydown = event => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            toggle()
-          }
-        }
-        const icon = document.createElement('i')
-        icon.classList.add('fa')
-        icon.setAttribute('aria-hidden', true)
-        // Set up initial state
-        if (config.state.on) {
-          icon.classList.add('fa-toggle-on')
-        } else {
-          icon.classList.add('fa-toggle-off')
-        }
-        anchor.setAttribute('aria-label', 'Toggle light ' + lightid)
-        anchor.appendChild(icon)
-        control.appendChild(anchor)
-      } else if (attribute.name in config.state) {
-        const createAttributeControl = (inputParser, updateFn) => {
-          const label = document.createElement('label')
-          label.innerHTML = attribute.name
-          const input = document.createElement('input')
-          input.defaultValue = config.state[attribute.name]
-          input.oninput = event => settings[attribute.name] = inputParser(event.target.value)
-          input.onkeydown = event => {
-            if (event.key === 'Enter') {
-              updateFn()
-            }
-          }
-          label.appendChild(input)
-          control.appendChild(label)
-        }
-
-        if (attribute.name === 'xy') {
+        } else if (attribute.name === 'xy') {
           createAttributeControl(
+            attribute,
             xyString => xyString.split(',').map(parseFloat),
             () => {
               delete settings.hue
@@ -86,7 +88,7 @@ window.HueView = function(hueston) {
               return hueston.updateLight(lightid, settings)
             })
         } else {
-          createAttributeControl(parseInt, () => hueston.updateLight(lightid, settings))
+          createAttributeControl(attribute, parseInt, () => hueston.updateLight(lightid, settings))
         }
       }
     })
