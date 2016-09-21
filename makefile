@@ -1,4 +1,4 @@
-default: clean | sass js
+default: | clean sass js
 
 .PHONY: default sass lint lint-sass lint-js edit clean js node_modules watch
 
