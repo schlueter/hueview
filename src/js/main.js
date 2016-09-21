@@ -1,4 +1,4 @@
-!function () {
+(function () {
 'use strict';
 Promise.all([
   'static/hueston.js',
@@ -15,4 +15,4 @@ Promise.all([
 })))
   .then(() => new HueView(new Hueston()))
   .catch(error => console.error('Error loading scripts:', error))
-}()
+})()

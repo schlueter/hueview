@@ -1,4 +1,4 @@
-!function () {
+(function () {
   'use strict';
   const logView = document.createElement('div')
   logView.id = 'logger'
@@ -8,4 +8,4 @@
     logView.innerHTML += '<pre>' + args.join(' ')
     logView.scrollTop = logView.scrollHeight
   }
-}()
+})()
