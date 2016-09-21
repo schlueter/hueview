@@ -18,5 +18,8 @@
   "homepage": "https://github.com/schlueter/hueview#readme",
   "dependencies": {
     "font-awesome": "^4.2.0"
+  },
+  "devDependencies": {
+    "wr": "^1.3.1"
   }
 }
