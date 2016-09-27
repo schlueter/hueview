@@ -3,7 +3,7 @@
 Promise.all([
   'static/hueston.js',
   'static/hueview.js',
-  'static/log.js'
+  'static/slider.js',
 ].map(url => new Promise(function(resolve, reject) {
     const head = document.getElementsByTagName('head')[0]
     const script = document.createElement('script')
