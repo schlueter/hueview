@@ -1,5 +1,4 @@
 window.Hueston = function () {
-  'use strict';
   this.storage = localStorage
 
   const request = (method, url, data) =>

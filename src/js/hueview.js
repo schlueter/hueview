@@ -1,6 +1,4 @@
 window.HueView = function(hueston) {
-  'use strict';
-
   const createLightControl = (lightid, config) => {
     const control = document.createElement('div')
     const title = document.createElement('h3')

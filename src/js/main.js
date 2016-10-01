@@ -1,4 +1,1 @@
-(function () {
-  'use strict';
-  new HueView(new Hueston())
-})()
+new HueView(new Hueston())
