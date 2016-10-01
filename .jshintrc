@@ -5,6 +5,7 @@
   "laxcomma": true,
   "browser": true,
   "devel": true,
+  "strict": "implied",
   "globals": {
     "HueView": false,
     "Hueston": false
