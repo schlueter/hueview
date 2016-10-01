@@ -4,14 +4,15 @@ default: | clean sass js
 
 SRC_DIR='src'
 SRC_INDEX='$(SRC_DIR)/index.html'
-
 SRC_JS=$(shell awk '/concat:/,/\ fi\ /{ if (!/(concat:|fi)/)print}' $(SRC_INDEX) | sed -n 's/.*src="\(.*\)".*/\1/p')
-DEST_JS=$(shell sed -n 's/.*concat:\ \([^ ]*\)\ -->*/\1/p' $(SRC_INDEX))
+
 DEST_DIR='static'
+DEST_CSS=$(DEST_DIR)/app.css
+DEST_JS=$(DEST_DIR)/$(shell sed -n 's/.*concat:\ \([^ ]*\)\ -->*/\1/p' $(SRC_INDEX))
 DEST_INDEX='index.html'
 
 lint: lint-sass lint-js
-sass: $(DEST_DIR)/app.css
+sass: $(DEST_CSS)
 js: $(DEST_JS)
 
 node_modules:
@@ -19,17 +20,20 @@ node_modules:
 
 $(DEST_JS): $(DEST_INDEX)
 	@mkdir -p static
-	echo '' > $(DEST_JS); \
+	@echo ';(function () {' > $(DEST_JS); \
+	echo '  "use strict";' >> $(DEST_JS); \
 	for f in $(SRC_JS); \
 	do \
-		echo $$f $(DEST_JS);\
+		echo Adding contents of $(SRC_DIR)/$$f to $(DEST_JS);\
 		echo ';(function () {' >> $(DEST_JS); \
-		cat $$f >> $(DEST_JS); \
+		cat $(SRC_DIR)/$$f >> $(DEST_JS); \
 		echo '})()' >> $(DEST_JS); \
-	done
+	done; \
+	echo '})()' >> $(DEST_JS)
 
 $(DEST_INDEX):
-	sed '/concat:/,/\ fi\ /{//!d;}; /concat:/a\'$$'\n''<script type="text/javascript" src="$(DEST_JS)"></script>'$$'\n''; /concat/d ; /\ fi\ /d' $(SRC_INDEX) \
+	@echo Replacing concat section of index.html with load of $(DEST_JS)
+	@sed '/concat:/,/\ fi\ /{//!d;}; /concat:/a\'$$'\n''<script type="text/javascript" src="$(DEST_JS)"></script>'$$'\n''; /concat/d ; /\ fi\ /d' $(SRC_INDEX) \
 		> $(DEST_INDEX)
 
 # Close ' for highlighters
@@ -38,8 +42,9 @@ static/js:
 	@mkdir -p static
 	cp src/js/* static/
 
-$(DEST_DIR)/app.css: $(DEST_DIR)/fonts
-	sassc --style expanded \
+$(DEST_CSS): $(DEST_DIR)/fonts
+	@echo Building sass into $(DEST_CSS)
+	@sassc --style expanded \
 		--line-comments \
 		--sourcemap \
 		--load-path node_modules/font-awesome/scss \
