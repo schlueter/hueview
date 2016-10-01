@@ -1,29 +1,25 @@
 (function () {
   'use strict';
   var slider, initialY, movementY
-  var bMouseUp = true
+  var mouseUp = true
 
-  document.onmouseup = () => bMouseUp = true
-  document.onmousemove = onmousemoveEvent => bMouseUp ? false
-    : slider.style.top = String(movementY + onmousemoveEvent.clientY - initialY) + 'px'
-  document.onmousedown = onmousedownEvent => {
-    var bExit = true
-    for (var iNode = onmousedownEvent.target; iNode; iNode = iNode.parentNode) {
-      if (iNode.className === 'slider') {
-  			bExit = false
-  			slider = iNode
-  			break
-  		}
+  document.onmouseup = () => mouseUp = true
+  document.onmousemove = event => {
+    if (!mouseUp && event.clientY > slider.parentElement.offsetTop
+        && event.clientY < slider.parentElement.offsetTop + slider.parentElement.offsetHeight) {
+      slider.style.top = String(movementY + event.clientY - initialY) + 'px'
+      slider.dataset.position = (event.clientY - slider.parentElement.offsetTop)/(slider.parentElement.offsetTop + slider.parentElement.offsetHeight)
+      console.log((event.clientY - slider.parentElement.offsetTop)/(slider.parentElement.offsetTop + slider.parentElement.offsetHeight))
     }
-    if (bExit) {
-  	  return
-  	}
-    bMouseUp = false
-    movementY = 0
-    for (var iOffPar = slider; iOffPar; iOffPar = iOffPar.offsetParent) {
-      movementY += iOffPar.offsetTop
+    return false
+  }
+  document.onmousedown = event => {
+    if (event.target.classList.contains('slider')) {
+      slider = event.target
+      mouseUp = false
+      movementY = slider.offsetTop
+      initialY = event.clientY
     }
-    initialY = onmousedownEvent.clientY
     return false
   }
 })()
