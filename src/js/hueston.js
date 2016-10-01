@@ -58,10 +58,11 @@ window.Hueston = function () {
         : Error(response))
     : new Promise((resolve, reject) => resolve(this.storage.getItem('username')))
 
-  this.getHubIP = () =>
+  this.getHubIP = (resolve, reject) =>
     // Check if we already have this value
-    !this.storage.getItem('hubID') || !this.storage.getItem('hubIP') ?
-      request('GET', "https://www.meethue.com/api/nupnp")
+    this.storage.getItem('hubID') && this.storage.getItem('hubIP') ?
+      new Promise((resolve, reject) => resolve(this.storage.getItem('hubIP')))
+    : request('GET', "https://www.meethue.com/api/nupnp")
         .then(response => {
           if (response.length === 1) {
             this.storage.setItem('hubID', response[0].id)
@@ -69,12 +70,10 @@ window.Hueston = function () {
           } else {
             // TODO
             alert('Multi hub systems not yet supported')
-            reject('Multi hub systems not yet supported')
           }
-          resolve(this.storage.getItem('hubIP'))
+          return this.storage.getItem('hubIP')
         })
         .catch(Error)
-    : new Promise((resolve, reject) => resolve(this.storage.getItem('hubIP')))
 
   this.getLights = () =>
     this.getHubIP()
@@ -88,7 +87,6 @@ window.Hueston = function () {
     this.getHubIP()
       .then(() => this.api('lights').post())
       .then(() => this.api('lights/new').get())
-      .then(response => log(JSON.stringify(response)))
       .then(response => this.lights = response)
       .catch(Error)
 
@@ -98,7 +96,6 @@ window.Hueston = function () {
     this.getHubIP()
       .then(() => this.api('lights').post())
       .then(() => this.api('lights/new').get())
-      .then(response => log(JSON.stringify(response)))
       .then(response => this.lights = response)
       .catch(error => Error(error))
 
