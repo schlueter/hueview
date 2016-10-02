@@ -13,12 +13,15 @@ DEST_CSS=$(DEST_DIR)/$(shell sed -n 's/.*sass-build:\ \([^ ]*\)\ -->*/\1/p' $(SR
 DEST_JS=$(DEST_DIR)/$(shell sed -n 's/.*js-concat:\ \([^ ]*\)\ -->*/\1/p' $(SRC_INDEX))
 DEST_INDEX=index.html
 
+NODE_MODULES=$(shell jq -r '.["dependencies"] * .["devDependencies"] | keys[] | "node_modules/" + .' package.json )
+
 lint: lint-sass lint-js
 sass: $(DEST_CSS)
 js: $(DEST_JS)
 index: $(DEST_INDEX) | js-index sass-index
+node_modules: $(NODE_MODULES)
 
-node_modules:
+$(NODE_MODULES):
 	npm install
 
 $(DEST_JS):
@@ -78,7 +81,7 @@ clean:
 edit:
 	find src -type f -exec vim {} +
 
-watch:
+watch: node_modules
 	@if [ -f node_modules/wr/bin/wr ]; \
 	then node_modules/wr/bin/wr 'make js sass' src; \
 	else printf '\x1B[31mPlease run `make node_modules` and try again.\x1B[0m'; \
