@@ -56,7 +56,7 @@ $(DEST_JS):
 
 js-index: $(DEST_INDEX)
 	@echo Replacing js-concat section of index.html with load of $(RELATIVE_JS)
-	@sed -i '' '/js-concat:/,/js-concat\ fi/{//!d;}; /js-concat:/a\'$$' \
+	@sed -i '/js-concat:/,/js-concat\ fi/{//!d;}; /js-concat:/a\'$$' \
 		\n''<script type="text/javascript" src="$(RELATIVE_JS)"></script>'$$' \
 		\n''; /js-concat/d' $(DEST_INDEX)
 
@@ -64,7 +64,7 @@ js-index: $(DEST_INDEX)
 
 sass-index: $(DEST_INDEX)
 	@echo Replacing build-sass section of index.html with include of $(RELATIVE_CSS)
-	@sed -i '' '/sass-build:/,/sass-build\ fi/{//!d;}; /sass-build:/a\'$$' \
+	@sed -i '/sass-build:/,/sass-build\ fi/{//!d;}; /sass-build:/a\'$$' \
 		\n''<link rel="stylesheet" type="text/css" href="$(RELATIVE_CSS)">'$$' \
 		\n''; /sass-build/d' $(DEST_INDEX)
 
@@ -76,10 +76,9 @@ $(DEST_INDEX):
 
 $(DEST_CSS): $(DEST_STATIC)/fonts
 	@echo Building $(SRC_DIR)/$(SRC_SASS) into $(DEST_CSS)
-	@sassc --style expanded \
-		--line-comments \
+	@pysassc --style expanded \
 		--sourcemap \
-		--load-path node_modules/font-awesome/scss \
+		--include-path node_modules/font-awesome/scss \
 		$(SRC_DIR)/$(SRC_SASS) $(DEST_CSS)
 
 lint-sass:
