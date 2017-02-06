@@ -3,17 +3,24 @@
   unarchive:
     remote_src=yes
     src=https://nodejs.org/dist/v6.9.5/node-v6.9.5-linux-x64.tar.xz
-    dest=/usr/local/node
+    dest=/usr/local/
+
+- name: link node executables
+  file:
+    state=link
+    src=/usr/local/node-v6.9.5-linux-x64
+    path=/usr/local/node
 
 - name: link node executables
   file:
     state=link
     src=/usr/local/node/bin/{{ item }}
     path=/usr/local/bin/{{ item }}
+  with_items: [ npm, node ]
 
 - name: install apt prerequisites
   apt: name={{ item }} state=installed update_cache=yes cache_valid_time=1800
-  with_items: [ pysassc ]
+  with_items: [ pysassc, make, jq, python-setuptools ]
 
 - name: build hueview
-  command: make chdir={{ hueview_dir }}
+  command: make -C {{ hueview_dir }}

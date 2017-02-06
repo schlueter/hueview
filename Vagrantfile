@@ -7,6 +7,6 @@ Vagrant.configure("2") do |config|
     raw_arguments: [ "--diff" ],
     sudo: true,
     extra_vars: {
-      hueview_install_dir: "/vagrant"
+      hueview_dir: "/vagrant"
     }
 end
