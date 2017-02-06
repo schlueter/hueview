@@ -1,0 +1,12 @@
+---
+- name: install nginx config for hueview from template
+  template: src={{ item }}.j2 dest=/{{ item }}
+  with_items: [ etc/nginx/sites-available/hueview.conf ]
+  notify: reload nginx
+
+- name: activate hueview nginx config
+  file:
+    state=link
+    src=/etc/nginx/sites-available/hueview.conf
+    dest=/etc/nginx/sites-enabled/hueview.conf
+  notify: reload nginx
