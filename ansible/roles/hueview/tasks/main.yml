@@ -1,2 +1,19 @@
 ---
-- debug: msg=here
+- name: download nodejs
+  unarchive:
+    remote_src=yes
+    src=https://nodejs.org/dist/v6.9.5/node-v6.9.5-linux-x64.tar.xz
+    dest=/usr/local/node
+
+- name: link node executables
+  file:
+    state=link
+    src=/usr/local/node/bin/{{ item }}
+    path=/usr/local/bin/{{ item }}
+
+- name: install apt prerequisites
+  apt: name={{ item }} state=installed update_cache=yes cache_valid_time=1800
+  with_items: [ pysassc ]
+
+- name: build hueview
+  command: make chdir={{ hueview_dir }}

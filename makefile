@@ -1,4 +1,4 @@
-default: | clean sass js index
+default: build
 
 .PHONY: default sass lint lint-sass lint-js edit clean js node_modules watch js-index sass-index index help
 
@@ -19,6 +19,8 @@ DEST_CSS=$(DEST_DIR)/$(RELATIVE_CSS)
 DEST_JS=$(DEST_DIR)/$(RELATIVE_JS)
 
 NODE_MODULES=$(shell jq -r '.["dependencies"] * .["devDependencies"] | keys[] | "node_modules/" + .' package.json )
+
+build: | clean sass js index
 
 lint: lint-sass lint-js
 sass: $(DEST_CSS)
