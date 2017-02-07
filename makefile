@@ -20,9 +20,9 @@ DEST_JS=$(DEST_DIR)/$(RELATIVE_JS)
 
 NODE_MODULES=$(shell jq -r '.["dependencies"] * .["devDependencies"] | keys[] | "node_modules/" + .' package.json )
 
-build: | clean index
+build: | clean index    ## Build the app
 
-lint: lint-sass lint-js
+lint: lint-sass lint-js ## Lint src
 sass: $(DEST_CSS)
 js: $(DEST_JS)
 index: | js-index sass-index $(DEST_INDEX)
@@ -31,14 +31,14 @@ node_modules: $(NODE_MODULES)
 help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-clean:
+clean:          ## Clean up build artifacts
 	rm -rf node_modules public
 
-edit:
+edit:           ## Edit all src files
 	find src -type f -exec vim {} +
 
-watch: node_modules
-	node_modules/wr/bin/wr 'make js sass index' src
+watch: node_modules ## Run `make index` on changes to src
+	node_modules/wr/bin/wr 'make index' src
 
 $(NODE_MODULES):
 	npm install
