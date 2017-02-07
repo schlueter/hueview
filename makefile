@@ -20,12 +20,12 @@ DEST_JS=$(DEST_DIR)/$(RELATIVE_JS)
 
 NODE_MODULES=$(shell jq -r '.["dependencies"] * .["devDependencies"] | keys[] | "node_modules/" + .' package.json )
 
-build: | clean sass js index
+build: | clean index
 
 lint: lint-sass lint-js
 sass: $(DEST_CSS)
 js: $(DEST_JS)
-index: $(DEST_INDEX) | js-index sass-index
+index: | js-index sass-index $(DEST_INDEX)
 node_modules: $(NODE_MODULES)
 
 help:           ## Show this help.
@@ -56,21 +56,19 @@ $(DEST_JS):
 	done; \
 	echo '})()' >> $(DEST_JS)
 
-js-index: $(DEST_INDEX)
+js-index: | js $(DEST_INDEX)
 	@echo Replacing js-concat section of index.html with load of $(RELATIVE_JS)
-	@sed -i '/js-concat:/,/js-concat\ fi/{//!d;}; /js-concat:/a\'$$' \
-		\n''<script type="text/javascript" src="$(RELATIVE_JS)"></script>'$$' \
-		\n''; /js-concat/d' $(DEST_INDEX)
+	@# Mixed whitespace here is intentional
+	@sed -i '/js-concat:/,/js-concat\ fi/c\
+    <script type="text/javascript" src="$(RELATIVE_JS)"></script>' \
+		$(DEST_INDEX)
 
-# Close ' for highlighters
-
-sass-index: $(DEST_INDEX)
+sass-index: | sass $(DEST_INDEX)
 	@echo Replacing build-sass section of index.html with include of $(RELATIVE_CSS)
-	@sed -i '/sass-build:/,/sass-build\ fi/{//!d;}; /sass-build:/a\'$$' \
-		\n''<link rel="stylesheet" type="text/css" href="$(RELATIVE_CSS)">'$$' \
-		\n''; /sass-build/d' $(DEST_INDEX)
-
-# Close ' for highlighters
+	@# Mixed whitespace here is intentional
+	@sed -i '/sass-build:/,/sass-build\ fi/c\
+    <link rel="stylesheet" type="text/css" href="$(RELATIVE_CSS)">' \
+		$(DEST_INDEX)
 
 $(DEST_INDEX):
 	@echo Copying $(SRC_INDEX) template to $(DEST_INDEX)
