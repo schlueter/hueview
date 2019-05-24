@@ -19,8 +19,11 @@
   with_items: [ npm, node ]
 
 - name: install apt prerequisites
-  apt: name={{ item }} state=installed update_cache=yes cache_valid_time=1800
-  with_items: [ pysassc, make, jq, python-setuptools ]
+  apt:
+    name: [ pysassc, make, jq, python-setuptools ]
+    state: present
+    update_cache: yes
+    cache_valid_time: 1800
 
 - name: build hueview
   command: make -C {{ hueview_dir }}
