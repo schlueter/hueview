@@ -5,7 +5,6 @@ Vagrant.configure("2") do |config|
     playbook: "ansible/main.yml",
     verbose: "-vv",
     raw_arguments: [ "--diff" ],
-    sudo: true,
     extra_vars: {
       hueview_dir: "/vagrant",
       ansible_python_interpreter: "/usr/bin/python3"
