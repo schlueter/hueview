@@ -1,6 +1,6 @@
 default: build
 
-.PHONY: default sass lint lint-sass lint-js edit clean js node_modules watch js-index sass-index index help
+.PHONY: default sass lint lint-js edit clean js node_modules watch js-index sass-index index help
 
 SRC_DIR=src
 DEST_DIR=public
@@ -20,9 +20,9 @@ DEST_JS=$(DEST_DIR)/$(RELATIVE_JS)
 
 NODE_MODULES=$(shell jq -r '.["dependencies"] * .["devDependencies"] | keys[] | "node_modules/" + .' package.json )
 
-build: | clean index    ## Build the app
+build: index    ## Build the app
 
-lint: lint-sass lint-js ## Lint src
+lint: lint-js ## Lint src
 sass: $(DEST_CSS)
 js: $(DEST_JS)
 index: | js-index sass-index $(DEST_INDEX)
@@ -76,13 +76,10 @@ $(DEST_INDEX):
 
 $(DEST_CSS): $(DEST_STATIC)/fonts
 	@echo Building $(SRC_DIR)/$(SRC_SASS) into $(DEST_CSS)
-	@pysassc --style expanded \
+	@sassc --style expanded \
 		--sourcemap \
-		--include-path node_modules/font-awesome/scss \
+		--load-path node_modules/font-awesome/scss \
 		$(SRC_DIR)/$(SRC_SASS) $(DEST_CSS)
-
-lint-sass:
-	sass --check $(SRC_DIR)/$(SRC_SASS)
 
 $(DEST_STATIC)/fonts: node_modules
 	@mkdir -p $(DEST_STATIC)/fonts
